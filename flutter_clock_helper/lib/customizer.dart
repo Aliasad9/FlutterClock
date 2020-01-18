@@ -177,7 +177,8 @@ class _ClockCustomizerState extends State<ClockCustomizer> {
 
   @override
   Widget build(BuildContext context) {
-    final clock = SizedBox(
+    final clock = AspectRatio(
+      aspectRatio: 5 / 3,
       child: Stack(
         children: <Widget>[
           Positioned(

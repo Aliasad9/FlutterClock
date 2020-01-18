@@ -158,25 +158,19 @@ class _AnalogClockState extends State<AnalogClock>
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
-    final customTheme = Theme.of(context).brightness == Brightness.light
+    final customTheme = (_now.hour < 18 && _now.hour >= 6)
         ? Theme.of(context).copyWith(
-            // Hour hand.
             primaryColor: Color.fromRGBO(128, 128, 128, 1),
             textSelectionColor: Colors.black54,
-            // Minute hand.
             highlightColor: Color.fromRGBO(128, 128, 128, 1),
-            //highlightColor: Color(0xFF8AB4F8),
-            // Second hand.
-            //accentColor: Color(0xFF669DF6),
             accentColor: Color.fromRGBO(179, 0, 0, 1),
-            backgroundColor: Colors.redAccent,
-//            backgroundColor: Color(0xFF79808A),
+            backgroundColor: Colors.white,
           )
         : Theme.of(context).copyWith(
-            primaryColor: Color(0xFFD2E3FC),
+            primaryColor: Colors.white,
             textSelectionColor: Colors.white,
-            highlightColor: Color(0xFF4285F4),
-            accentColor: Color(0xFF8AB4F8),
+            highlightColor: Colors.white,
+            accentColor: Color.fromRGBO(179, 0, 0, 1),
             backgroundColor: Color(0x4F3C4043),
           );
 
