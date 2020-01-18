@@ -4,5 +4,5 @@
 
 Screenshot [Analog Clock](analog_clock)
 
-<img src='analog_clock/analog.gif' width='350'>
+<img src='analog_clock/analog.jpg' width='350'>
 
