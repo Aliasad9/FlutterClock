@@ -2,9 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'model.dart';
 
@@ -43,8 +41,6 @@ class _ClockCustomizerState extends State<ClockCustomizer> {
   final _model = ClockModel();
   ThemeMode _themeMode = ThemeMode.light;
   bool _configButtonShown = false;
-  double screenWidth = 0;
-  double screenHeight = 0;
 
   @override
   void initState() {
@@ -177,31 +173,18 @@ class _ClockCustomizerState extends State<ClockCustomizer> {
 
   @override
   Widget build(BuildContext context) {
-    final clock = AspectRatio(
-      aspectRatio: 5 / 3,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 20.0,
-                      offset: Offset(0.0, 0.75))
-                ],
-                shape: BoxShape.circle,
-                color: Color.fromRGBO(45, 45, 45, 1),
-                border: Border.all(
-                  width: 2,
-                  color: Theme.of(context).unselectedWidgetColor,
-                ),
-              ),
-              child: widget._clock(_model),
-              padding: EdgeInsets.all(7),
+    final clock = Center(
+      child: AspectRatio(
+        aspectRatio: 5 / 3,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 2,
+              color: Theme.of(context).unselectedWidgetColor,
             ),
           ),
-        ],
+          child: widget._clock(_model),
+        ),
       ),
     );
 
@@ -223,13 +206,7 @@ class _ClockCustomizerState extends State<ClockCustomizer> {
             },
             child: Stack(
               children: [
-                Positioned(
-                  child: clock,
-                  top: 10,
-                  bottom: 10,
-                  right: 10,
-                  left: 10,
-                ),
+                clock,
                 if (_configButtonShown)
                   Positioned(
                     top: 0,

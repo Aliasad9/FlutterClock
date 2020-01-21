@@ -42,15 +42,11 @@ class _AnalogClockState extends State<AnalogClock>
   var _temperatureRange = '';
   var _condition = '';
   var _location = '';
+  //Initializing the variables to hold screen size
   static double screenWidth = 0;
   static double screenHeight = 0;
 
   Timer _timer;
-
-//  final RelativeRectTween relativeRectTween = RelativeRectTween(
-//    begin: RelativeRect.fromLTRB(screenWidth, screenHeight / 2, 0, 0),
-//    end: RelativeRect.fromLTRB(0, 0, 0, screenHeight / 2),
-//  );
 
   AnimationController _controller;
   Animation<Offset> _offsetAnimation;
@@ -64,9 +60,8 @@ class _AnalogClockState extends State<AnalogClock>
     double timeInMS = (timeInHrs * 3600);
     int time = timeInMS.truncate();
     int diff = 18 * 3600 - time;
-    print("time " + diff.toString());
 
-    // Set the initial values.
+    //Initializing the Animation Controller
     _controller = AnimationController(
       duration: Duration(seconds: diff * 60),
       vsync: this,
@@ -87,27 +82,27 @@ class _AnalogClockState extends State<AnalogClock>
   }
 
   void updateOffset() {
-    double now_double_hrs =
-        _now.hour + (_now.minute / 60) + (_now.second / 3600);
-    if (_now.hour < 18 && _now.hour >= 6) {
-      double input_start = 18, input_end = 6;
-      double output_start = 1, output_end = -1;
-      double output = output_start +
-          ((output_end - output_start) / (input_end - input_start)) *
-              (now_double_hrs - input_start);
+    //Calculating the time left to complete the animation
+    double nowDoubleHrs = _now.hour + (_now.minute / 60) + (_now.second / 3600);
+    //Checking if it is day or night
 
+    if (_now.hour < 18 && _now.hour >= 6) {
+      //Mapping the range of the day hours to the range of offset of sun animation
+      double inputStart = 18, inputEnd = 6;
+      double outputStart = 1, outputEnd = -1;
+      double output = outputStart +
+          ((outputEnd - outputStart) / (inputEnd - inputStart)) *
+              (nowDoubleHrs - inputStart);
       _offsetAnimation =
           Tween<Offset>(begin: Offset(-output, 0), end: Offset(-1, 0.0))
               .animate(_controller);
+      _controller.forward();
     } else {
+      //Resetting the sun animation to right side to start over again during day
       _offsetAnimation =
           Tween<Offset>(begin: Offset(-1.1, 0), end: Offset(-1.1, 0.0))
               .animate(_controller);
-    }
-    if (_now.hour >= 18) {
       _controller.reset();
-    } else if (_now.hour < 18 && _now.hour >= 6) {
-      _controller.forward();
     }
   }
 
@@ -115,6 +110,7 @@ class _AnalogClockState extends State<AnalogClock>
   void dispose() {
     _timer?.cancel();
     widget.model.removeListener(_updateModel);
+
     _controller.dispose();
     super.dispose();
   }
@@ -145,13 +141,6 @@ class _AnalogClockState extends State<AnalogClock>
 
   @override
   Widget build(BuildContext context) {
-    // There are many ways to apply themes to your clock. Some are:
-    //  - Inherit the parent Theme (see ClockCustomizer in the
-    //    flutter_clock_helper package).
-    //  - Override the Theme.of(context).colorScheme.
-    //  - Create your own [ThemeData], demonstrated in [AnalogClock].
-    //  - Create a map of [Color]s to custom keys, demonstrated in
-    //    [DigitalClock].
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
 
@@ -164,14 +153,16 @@ class _AnalogClockState extends State<AnalogClock>
             textSelectionColor: Colors.black54,
             highlightColor: Color.fromRGBO(128, 128, 128, 1),
             accentColor: Color.fromRGBO(179, 0, 0, 1),
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
+            unselectedWidgetColor: Colors.blue,
           )
         : Theme.of(context).copyWith(
             primaryColor: Colors.white,
             textSelectionColor: Colors.white,
             highlightColor: Colors.white,
             accentColor: Color.fromRGBO(179, 0, 0, 1),
-            backgroundColor: Color(0x4F3C4043),
+            backgroundColor: Colors.transparent,
+            unselectedWidgetColor: Colors.red,
           );
 
     final time = DateFormat.Hms().format(DateTime.now());
@@ -195,6 +186,17 @@ class _AnalogClockState extends State<AnalogClock>
       ),
       child: Center(
         child: Container(
+          decoration: BoxDecoration(
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 10.0,
+                  offset: Offset(0.0, 0.75))
+            ],
+            shape: BoxShape.circle,
+            color: Color.fromRGBO(45, 45, 45, 1),
+          ),
+          padding: EdgeInsets.all(7),
           child: ClipOval(
             child: Container(
               height: screenHeight - (screenHeight % 100),
@@ -208,24 +210,25 @@ class _AnalogClockState extends State<AnalogClock>
                         shape: BoxShape.circle,
                         color: Color.fromRGBO(0, 0, 0, 1),
                         gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                             stops: [
                               0.1,
                               0.25,
+                              0.5,
                               0.75,
                               0.9
                             ],
                             colors: [
                               Colors.black12,
+                              Colors.black45,
                               Colors.black54,
-                              Colors.black54,
+                              Colors.black45,
                               Colors.black12
                             ]),
                       ),
                     ),
                   ),
-
                   Center(
                     child: SlideTransition(
                       position: _offsetAnimation,
